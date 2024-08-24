@@ -134,7 +134,7 @@ function IncomeTaxCalculator() {
 
     try {
       const response = await axios.post(
-        `http://localhost:5000/${endpoint}`,
+        `https://margaret-backend.onrender.com/${endpoint}`,
         formData,
         {
           headers: { "Content-Type": "multipart/form-data" },
