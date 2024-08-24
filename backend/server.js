@@ -14,7 +14,13 @@ dotenv.config();
 
 const port = process.env.PORT || 3000;
 
-app.use(cors());
+const corsOptions = {
+  origin: "https://margaret.onrender.com/",
+  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+  credentials: true,
+};
+
+app.use(cors(corsOptions));
 
 const uploadsDir = path.join(__dirname, "PdfUploads");
 const uploadsDirImg = path.join(__dirname, "ImgUploads");
@@ -52,6 +58,10 @@ const storage = multer.diskStorage({
 });
 
 const upload = multer({ storage: storage });
+
+app.get("/", (req, res) => {
+  res.send("Hello from the API!");
+});
 
 app.post("/uploadPDF", upload.single("pdfFile"), async (req, res) => {
   const pdfPath = req.file.path;
