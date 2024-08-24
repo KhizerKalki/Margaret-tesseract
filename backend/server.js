@@ -7,7 +7,6 @@ const axios = require("axios");
 const cors = require("cors");
 const app = express();
 const dotenv = require("dotenv");
-const OpenAI = require("openai");
 const tesseract = require("node-tesseract-ocr");
 
 dotenv.config();
@@ -52,10 +51,6 @@ const storage = multer.diskStorage({
 });
 
 const upload = multer({ storage: storage });
-
-app.get("/", (req, res) => {
-  res.send("Hello from the API!");
-});
 
 app.post("/uploadPDF", upload.single("pdfFile"), async (req, res) => {
   const pdfPath = req.file.path;
