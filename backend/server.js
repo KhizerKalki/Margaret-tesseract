@@ -15,9 +15,7 @@ dotenv.config();
 const port = process.env.PORT || 3000;
 
 const corsOptions = {
-  origin: "https://margaret.onrender.com/",
-  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-  credentials: true,
+  origin: "https://margaret.onrender.com",
 };
 
 app.use(cors(corsOptions));
