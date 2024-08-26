@@ -104,6 +104,7 @@ function IncomeTaxCalculator() {
   };
   const [inputs, setInputs] = useState(sampleData);
   const [showTables, setShowTables] = useState(false);
+  const [dataFetched, setDataFetched] = useState(false);
 
   const BottomGradient = () => {
     return (
@@ -122,6 +123,7 @@ function IncomeTaxCalculator() {
     setError("");
   };
   const uploadFile = async () => {
+    setDataFetched(false);
     setLoading(true);
     setError("");
     const formData = new FormData();
@@ -134,7 +136,7 @@ function IncomeTaxCalculator() {
 
     try {
       const response = await axios.post(
-        `https://6494-2405-201-3023-782e-2ea7-954c-15cd-2c59.ngrok-free.app/${endpoint}`,
+        `https://b4d4-2405-201-3023-782e-59a5-8ea7-5f46-c976.ngrok-free.app/${endpoint}`,
         formData,
         {
           headers: { "Content-Type": "multipart/form-data" },
@@ -143,6 +145,7 @@ function IncomeTaxCalculator() {
       console.log(response.data);
       setInputs(response.data);
       setError("");
+      setDataFetched(true);
     } catch (error) {
       console.error("Error:", error);
       setError(
@@ -155,13 +158,13 @@ function IncomeTaxCalculator() {
       setShowTables(true);
     }
   };
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!selectedFile) {
       setError("Please select a file.");
       return;
     }
-    uploadFile();
+    await uploadFile();
   };
 
   const handleChange = (section, key, value) => {
@@ -243,7 +246,7 @@ function IncomeTaxCalculator() {
         )}
       </div>
 
-      {showTables && (
+      {showTables && dataFetched && (
         <div className="container mx-auto max-w-5xl p-5 bg-white shadow-lg">
           <h1 className="text-center mb-5 text-gray-600">
             Monthly Salary Details 2023 - 2024
@@ -271,11 +274,7 @@ function IncomeTaxCalculator() {
                   <td className="border p-2">
                     <input
                       type="text"
-                      value={
-                        inputs.general?.[key] === undefined
-                          ? ""
-                          : inputs.general[key] || "0"
-                      }
+                      value={inputs.general[key]}
                       onChange={(e) =>
                         handleChange("general", key, e.target.value)
                       }
@@ -297,11 +296,7 @@ function IncomeTaxCalculator() {
                   <td className="border p-2">
                     <input
                       type="text"
-                      value={
-                        inputs.monthlySalaryDetails?.[key] === undefined
-                          ? ""
-                          : inputs.monthlySalaryDetails[key] || "0"
-                      }
+                      value={inputs.monthlySalaryDetails[key]}
                       onChange={(e) =>
                         handleChange(
                           "monthlySalaryDetails",
@@ -351,11 +346,7 @@ function IncomeTaxCalculator() {
                   <td className="border p-2">
                     <input
                       type="text"
-                      value={
-                        inputs.taxability?.oldRegime?.[key] === undefined
-                          ? ""
-                          : inputs.taxability.oldRegime[key] || "0"
-                      }
+                      value={inputs.taxability.oldRegime[key]}
                       onChange={(e) =>
                         handleChange(
                           "taxability",
@@ -376,11 +367,7 @@ function IncomeTaxCalculator() {
                   <td className="border p-2">
                     <input
                       type="text"
-                      value={
-                        inputs.taxability?.newRegime?.[key] === undefined
-                          ? ""
-                          : inputs.taxability.newRegime[key] || "0"
-                      }
+                      value={inputs.taxability.newRegime[key]}
                       onChange={(e) =>
                         handleChange(
                           "taxability",
@@ -435,11 +422,7 @@ function IncomeTaxCalculator() {
                   <td className="border p-2">
                     <input
                       type="text"
-                      value={
-                        inputs.taxableIncome?.oldRegime?.[key] === undefined
-                          ? ""
-                          : inputs.taxableIncome.oldRegime[key] || "0"
-                      }
+                      value={inputs.taxableIncome.oldRegime[key]}
                       onChange={(e) =>
                         handleChange(
                           "taxableIncome",
@@ -460,11 +443,7 @@ function IncomeTaxCalculator() {
                   <td className="border p-2">
                     <input
                       type="text"
-                      value={
-                        inputs.taxableIncome?.newRegime?.[key] === undefined
-                          ? ""
-                          : inputs.taxableIncome.newRegime[key] || "0"
-                      }
+                      value={inputs.taxableIncome.newRegime[key]}
                       onChange={(e) =>
                         handleChange(
                           "taxableIncome",
@@ -508,11 +487,7 @@ function IncomeTaxCalculator() {
                     <td className="border p-2 text-left">
                       <input
                         type="text"
-                        value={
-                          inputs.form16Details?.[key] === undefined
-                            ? ""
-                            : inputs.form16Details[key] || "0"
-                        }
+                        value={inputs.form16Details[key]}
                         onChange={(e) =>
                           handleChange("form16Details", key, e.target.value)
                         }
@@ -547,10 +522,10 @@ function IncomeTaxCalculator() {
                 16. Any alteration will render the same invalid.
               </p>
               <p className="text-gray-600 text-sm">
-                Digitally Signed by {inputs.form16Details?.signatureName || ""}
+                Digitally Signed by {inputs.form16Details?.signatureName}
               </p>
               <p className="text-gray-600 text-sm">
-                Date: {inputs.form16Details?.signatureDate || ""}
+                Date: {inputs.form16Details?.signatureDate}
               </p>
             </div>
           </div>
