@@ -8,11 +8,8 @@ const cors = require("cors");
 const app = express();
 const dotenv = require("dotenv");
 const tesseract = require("node-tesseract-ocr");
-
 dotenv.config();
-
 const port = process.env.PORT || 3000;
-
 app.use(cors());
 
 const uploadsDir = path.join(__dirname, "PdfUploads");
@@ -27,10 +24,9 @@ if (!fs.existsSync(uploadsDirImg)) {
 async function parseGPTResponse(responseString) {
   try {
     const jsonResponse = JSON.parse(responseString);
-
     return jsonResponse;
   } catch (error) {
-    console.error("Error parsing the response string to JSON:", error);
+    console.error("Error parsing the response string to JSON:");
     return null;
   }
 }
@@ -50,7 +46,7 @@ const storage = multer.diskStorage({
   },
 });
 
-const upload = multer({ storage: storage });
+const upload = multer({ storage: storage,limits:{fileSize:10*1024*1024}, });
 
 app.post("/uploadPDF", upload.single("pdfFile"), async (req, res) => {
   const pdfPath = req.file.path;
@@ -62,7 +58,7 @@ app.post("/uploadPDF", upload.single("pdfFile"), async (req, res) => {
     fs.unlinkSync(pdfPath);
     res.send(responseMessage);
   } catch (error) {
-    console.error("Error processing PDF:", error);
+    console.error("Error processing PDF:");await unlinkAsync(pdfPath).catch(console.error);
     res.status(500).send("Error processing PDF");
   }
 });
@@ -77,7 +73,7 @@ app.post("/uploadImage", upload.single("image"), async (req, res) => {
     fs.unlinkSync(imageFilePath);
     res.send(responseMessage);
   } catch (error) {
-    console.error("Error:", error);
+    console.error("Error processing image:");await unlinkAsync(imageFilePath).catch(console.error);
     res.status(500).send("Internal Server Error");
   }
 });
@@ -85,6 +81,7 @@ app.post("/uploadImage", upload.single("image"), async (req, res) => {
 function extractTextFromPDF(pdfPath) {
   let dataBuffer = fs.readFileSync(pdfPath);
   return pdf(dataBuffer).then(function (data) {
+    console.log(data.text);
     return data.text;
   });
 }
@@ -98,7 +95,7 @@ function extractTextFromImage(imagePath) {
   return tesseract.recognize(imagePath, config);
 }
 
-async function queryOpenAI(text, fileType) {
+async function queryOpenAI(text) {
   const apiKey = process.env.OPENAI_API_KEY;
   const url = "https://api.openai.com/v1/chat/completions";
   const headers = {
@@ -155,10 +152,10 @@ async function queryOpenAI(text, fileType) {
   try {
     const response = await axios.post(url, data, { headers });
     let content = response.data.choices[0].message.content;
-
+    console.log(content);
     return content;
   } catch (error) {
-    console.error("Error calling OpenAI API:", error);
+    console.error("Error calling OpenAI API:");
     return null;
   }
 }
@@ -266,7 +263,7 @@ function processInvoiceData(invoiceData) {
       },
     };
   } catch (error) {
-    console.error("Error fetching data:", error);
+    console.error("Error fetching data:");
     return null;
   }
 }
