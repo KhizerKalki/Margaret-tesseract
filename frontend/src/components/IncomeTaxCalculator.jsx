@@ -274,7 +274,7 @@ function IncomeTaxCalculator() {
                   <td className="border p-2">
                     <input
                       type="text"
-                      value={inputs.general[key]}
+                      value={inputs.general?.[key]}
                       onChange={(e) =>
                         handleChange("general", key, e.target.value)
                       }
@@ -296,7 +296,7 @@ function IncomeTaxCalculator() {
                   <td className="border p-2">
                     <input
                       type="text"
-                      value={inputs.monthlySalaryDetails[key]}
+                      value={inputs.monthlySalaryDetails?.[key]}
                       onChange={(e) =>
                         handleChange(
                           "monthlySalaryDetails",
@@ -346,7 +346,7 @@ function IncomeTaxCalculator() {
                   <td className="border p-2">
                     <input
                       type="text"
-                      value={inputs.taxability.oldRegime[key]}
+                      value={inputs.taxability.oldRegime?.[key]}
                       onChange={(e) =>
                         handleChange(
                           "taxability",
@@ -367,7 +367,7 @@ function IncomeTaxCalculator() {
                   <td className="border p-2">
                     <input
                       type="text"
-                      value={inputs.taxability.newRegime[key]}
+                      value={inputs.taxability.newRegime?.[key]}
                       onChange={(e) =>
                         handleChange(
                           "taxability",
@@ -422,7 +422,7 @@ function IncomeTaxCalculator() {
                   <td className="border p-2">
                     <input
                       type="text"
-                      value={inputs.taxableIncome.oldRegime[key]}
+                      value={inputs.taxableIncome.oldRegime?.[key]}
                       onChange={(e) =>
                         handleChange(
                           "taxableIncome",
@@ -443,7 +443,7 @@ function IncomeTaxCalculator() {
                   <td className="border p-2">
                     <input
                       type="text"
-                      value={inputs.taxableIncome.newRegime[key]}
+                      value={inputs.taxableIncome.newRegime?.[key]}
                       onChange={(e) =>
                         handleChange(
                           "taxableIncome",
@@ -487,7 +487,7 @@ function IncomeTaxCalculator() {
                     <td className="border p-2 text-left">
                       <input
                         type="text"
-                        value={inputs.form16Details[key]}
+                        value={inputs.form16Details?.[key]}
                         onChange={(e) =>
                           handleChange("form16Details", key, e.target.value)
                         }
