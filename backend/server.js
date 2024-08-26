@@ -8,12 +8,15 @@ const cors = require("cors");
 const app = express();
 const dotenv = require("dotenv");
 const tesseract = require("node-tesseract-ocr");
+const { promisify } = require("util");
 dotenv.config();
 const port = process.env.PORT || 3000;
 app.use(cors());
 
 const uploadsDir = path.join(__dirname, "PdfUploads");
 const uploadsDirImg = path.join(__dirname, "ImgUploads");
+
+const unlinkAsync = promisify(fs.unlink);
 
 if (!fs.existsSync(uploadsDir)) {
   fs.mkdirSync(uploadsDir, { recursive: true });
@@ -46,7 +49,10 @@ const storage = multer.diskStorage({
   },
 });
 
-const upload = multer({ storage: storage,limits:{fileSize:10*1024*1024}, });
+const upload = multer({
+  storage: storage,
+  limits: { fileSize: 10 * 1024 * 1024 },
+});
 
 app.post("/uploadPDF", upload.single("pdfFile"), async (req, res) => {
   const pdfPath = req.file.path;
@@ -55,10 +61,11 @@ app.post("/uploadPDF", upload.single("pdfFile"), async (req, res) => {
     const invoiceData = await queryOpenAI(text, "pdf");
     const parsedData = await parseGPTResponse(invoiceData);
     const responseMessage = processInvoiceData(parsedData);
-    fs.unlinkSync(pdfPath);
+    await unlinkAsync(pdfPath);
     res.send(responseMessage);
   } catch (error) {
-    console.error("Error processing PDF:");await unlinkAsync(pdfPath).catch(console.error);
+    console.error("Error processing PDF:");
+    await unlinkAsync(pdfPath).catch(console.error);
     res.status(500).send("Error processing PDF");
   }
 });
@@ -70,10 +77,11 @@ app.post("/uploadImage", upload.single("image"), async (req, res) => {
     const invoiceData = await queryOpenAI(text, "image");
     const parsedData = await parseGPTResponse(invoiceData);
     const responseMessage = processInvoiceData(parsedData);
-    fs.unlinkSync(imageFilePath);
+    await unlinkAsync(imageFilePath);
     res.send(responseMessage);
   } catch (error) {
-    console.error("Error processing image:");await unlinkAsync(imageFilePath).catch(console.error);
+    console.error("Error processing image:");
+    await unlinkAsync(imageFilePath).catch(console.error);
     res.status(500).send("Internal Server Error");
   }
 });
